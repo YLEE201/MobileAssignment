@@ -1,4 +1,4 @@
-package org.yuhonglee.gcu.mobileassignment.ui.main;
+package org.yuhonglee.gcu.mobileassignment.ui.FragmentSwitcher;
 //Name.Yu Hong Lee
 //StD No.S1620580
 
@@ -10,16 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import org.yuhonglee.gcu.mobileassignment.R;
-
-/**
- * A placeholder fragment containing a simple view.
- */
 
 //sets the placeholder to the first fragment
 public class PlaceholderFragment extends ListFragment{

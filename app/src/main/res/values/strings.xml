@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">MobileAssignment</string>
+    <string name="app_name">Traffic Scotland App</string>
     <string name="tab_text_1">Current Incidents</string>
     <string name="tab_text_2">Road Works</string>
-    <string name="tab_text_3">Plan Your Journey</string>
+    <string name="tab_text_3">Planned Road Works</string>
+    <string name="tab_text_4">Plan Your Journey</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

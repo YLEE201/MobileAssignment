@@ -1,4 +1,4 @@
-package org.yuhonglee.gcu.mobileassignment.ui.main;
+package org.yuhonglee.gcu.mobileassignment.Fragments;
 //Name.Yu Hong Lee
 //StD No.S1620580
 
@@ -32,19 +32,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.yuhonglee.gcu.mobileassignment.ListItemAdapter;
 import org.yuhonglee.gcu.mobileassignment.R;
-import org.yuhonglee.gcu.mobileassignment.XMLPullParserHandler;
-import org.yuhonglee.gcu.mobileassignment.XMLPullParserRoadworks;
+import org.yuhonglee.gcu.mobileassignment.PullParser.XMLPullParserHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.lang.ref.WeakReference;
 import java.net.URL;
 
 import java.util.List;
 
 //extends to the swipe refresh to allow refreshing the data with a upwards swipe
-public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class Frag1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
         //layout variables
         private EditText Search;
         private Button startButton;
@@ -53,14 +54,14 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
         private ListView listView;
         private View rootView;
         private SwipeRefreshLayout swipeLayout;
+        private Context context;
 
         //programming variables
         private ArrayAdapter<ListItemAdapter> adapter;
         private List<ListItemAdapter> current;
 
-        // Traffic Scotland URL
-        private String urlSource = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-
+        // Traffic Scotland URL Current Incidents
+        private String urlSource = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
         @Override
         public void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
@@ -70,14 +71,14 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
                 //sets the view for the fragment instead of the default Main Activity
-                rootView = inflater.inflate(R.layout.frag3_layout, container, false);
+                rootView = inflater.inflate(R.layout.frag1_layout, container, false);
 
 
                 //Connection between program and the layout
                 progressBar1 = rootView.findViewById(R.id.progressBar1);
-                startButton = (Button) rootView.findViewById(R.id.startButton);
+                startButton =  rootView.findViewById(R.id.startButton);
                 listView = rootView.findViewById(R.id.listView1);
-                swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+                swipeLayout =  rootView.findViewById(R.id.swipe_container);
                 Search = rootView.findViewById(R.id.Search);
 
                 //progress bar initialising
@@ -90,21 +91,23 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                 swipeLayout.setColorSchemeColors(Color.GREEN);
 
                 //executes the async task when the app opens
-                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 //when button is pressed or clicked run the async task
                 startButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         }
                 });
+
+
                 return rootView;
         }
-        //swipe refresh code that executes the async task
+        //swipe refresh code that executes the async task as well
         @Override
         public void onRefresh() {
-                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -115,6 +118,12 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
 
         //async task
         private class RetrieveFeedTask1 extends AsyncTask<Void, Integer, String> {
+                //for passing context// needed for dark theme
+                private final WeakReference<Context> contextReference;
+
+                public RetrieveFeedTask1(Context context) {
+                        this.contextReference = new WeakReference<Context>(context);
+                }
 
                 protected void onPreExecute() {
                         super.onPreExecute();
@@ -141,6 +150,7 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                         InputStream is = null;
                         String API_URL = urlSource;
 
+
                         //sets the value of the progress bar
                         for (int i =0;i < 100;i++)
                         {
@@ -162,16 +172,25 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                                 URL url = new URL(API_URL);
 
                                 //calls the pull parser class
-                                XMLPullParserRoadworks parser = new XMLPullParserRoadworks();
+                                XMLPullParserHandler parser = new XMLPullParserHandler();
 
-                                //Stores the API feed into String is
+                                //Stores the API feed into String to is
                                 is = url.openStream();
 
                                 //parses the API feed and stores it into List
                                 current = parser.parse(is);
 
+                                //checks context and runs the code if there is
+                                context = this.contextReference.get();
+                                if(context != null) {
+
+                                        //calls the array adapter to store items into the list text in the row layout
+                                        adapter = new ArrayAdapter<ListItemAdapter>
+                                        (context, R.layout.row, R.id.listtext, current);
+
                                 //closes the API stream
                                 is.close();
+                        }
 
                         } catch (IOException ae) {
                                 Log.e("MyTag", "ioexception");
@@ -181,32 +200,10 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
 
 
                 protected void onPostExecute(String emptyString){
-                        //hides the progress bar and display text
+                        //hides the progress bar and display text of completion
                         progressBar1.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), "Data Downloaded!!", Toast.LENGTH_SHORT).show();
-                        //Stores the list of current into the textview in row layout
-                        adapter = new ArrayAdapter<ListItemAdapter>
-                                (getActivity(), R.layout.row, R.id.listtext, current) {
-                                @Override
-                                public View getView(int position, View convertView, ViewGroup parent) {
-                                        //changes the colour of list item based on the Strings
-                                        // (could've been integer but I had no time to turn this into int)
-                                        View itemView = super.getView(position, convertView, parent);
-                                        if (getItem(position).getDifference().equals("{DAYS=0, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.GREEN);
-                                        } else if (getItem(position).getDifference().equals("{DAYS=1, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.YELLOW);
-                                        } else if (getItem(position).getDifference().equals("{DAYS=3, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.RED);
-                                        } else {
-                                                itemView.setBackgroundColor(Color.WHITE);
-                                        }
+                        Toast.makeText(context, "Data Downloaded!!", Toast.LENGTH_SHORT).show();
 
-
-                                        return itemView;
-
-                                }
-                        };
                         //calls the list view and sets filled row layout to list view
                         listView.setAdapter(adapter);
 
@@ -224,16 +221,16 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view,
                                                         int position, long title) {
-                                        ImageView img= (ImageView) view.findViewById(R.id.icon);
+                                        ImageView img= view.findViewById(R.id.icon);
                                         if(hasClicked.get(position, false))  {
-                                                img.setImageResource(R.drawable.baseline_expand_more_black_48dp);
+                                                img.setImageResource(R.drawable.baseline_expand_more_black_24dp);
                                                 current.get(position).setExpand(false);
                                                 hasClicked.put(position, false);
                                                 adapter.notifyDataSetChanged();
 
                                         }
                                         else {
-                                                img.setImageResource(R.drawable.baseline_expand_less_black_48dp);
+                                                img.setImageResource(R.drawable.baseline_expand_less_black_24dp);
                                                 current.get(position).setExpand(true);
                                                 hasClicked.put(position, true);
                                                 adapter.notifyDataSetChanged();
@@ -260,45 +257,46 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                         Search.addTextChangedListener(new TextWatcher() {
                                 @Override
                                 public void onTextChanged(final CharSequence s, int start, int before, int count) {
-                                        //once user hits enter or next on keyboard executes code
+                                        //once user hits enter or next on virtual keyboard, it executes the code
                                         ((EditText)rootView.findViewById(R.id.Search)).setOnEditorActionListener(
                                                 new EditText.OnEditorActionListener() {
                                                         //boiler code for the enter key on soft keyboard
                                                         @Override
                                                         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                                                 if (event != null) {
-                                                                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                                                                                actionId == EditorInfo.IME_ACTION_DONE ||
-                                                                                event.getAction() == KeyEvent.ACTION_DOWN &&
-                                                                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                                                                                if (!event.isShiftPressed()) {
-                                                                                        return true; // consume.
-                                                                                }
+                                                                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                                                                        actionId == EditorInfo.IME_ACTION_DONE ||
+                                                                        event.getAction() == KeyEvent.ACTION_DOWN &&
+                                                                                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                                                                        if (!event.isShiftPressed()) {
+                                                                                return true; // consume.
                                                                         }
-                                                                        //dynamically change height
-                                                                        int totalHeight = 0;
-                                                                        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
-                                                                        for (int i = 0; i < listAdapter.getCount(); i++) {
-                                                                                View listItem = listAdapter.getView(i, null, listView);
-                                                                                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                                                                                totalHeight += listItem.getMeasuredHeight();
-                                                                        }
-
-                                                                        ViewGroup.LayoutParams params = listView.getLayoutParams();
-                                                                        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-                                                                        listView.setLayoutParams(params);
-                                                                        listView.requestLayout();
-                                                                        //-----------------------------------------------------------------------------------------------------
-                                                                        return false; // pass on to other listeners.
                                                                 }
+                                                                //dynamically change height for the queried list
+                                                                int totalHeight = 0;
+                                                                int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+                                                                for (int i = 0; i < listAdapter.getCount(); i++) {
+                                                                        View listItem = listAdapter.getView(i, null, listView);
+                                                                        listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                                                                        totalHeight += listItem.getMeasuredHeight();
+                                                                }
+
+                                                                ViewGroup.LayoutParams params = listView.getLayoutParams();
+                                                                params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+                                                                listView.setLayoutParams(params);
+                                                                listView.requestLayout();
+                                                                //-----------------------------------------------------------------------------------------------------
+                                                                return false; // pass on to other listeners.
+                                                        }
                                                                 //filters the input based on edit text
-                                                                (Frag3.this).adapter.getFilter().filter(s);
+                                                                (Frag1.this).adapter.getFilter().filter(s);
 
                                                                 //hides keyboard
                                                                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                                                                 imm.hideSoftInputFromWindow(Search.getWindowToken(), 0);
                                                                 return true;
-                                                        }
+                                                                }
+
                                                 });
                                 }
 

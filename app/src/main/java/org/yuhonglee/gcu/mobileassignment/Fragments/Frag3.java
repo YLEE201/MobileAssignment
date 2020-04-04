@@ -1,8 +1,9 @@
-package org.yuhonglee.gcu.mobileassignment.ui.main;
+package org.yuhonglee.gcu.mobileassignment.Fragments;
 //Name.Yu Hong Lee
 //StD No.S1620580
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,16 +33,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.yuhonglee.gcu.mobileassignment.ListItemAdapter;
 import org.yuhonglee.gcu.mobileassignment.R;
-import org.yuhonglee.gcu.mobileassignment.XMLPullParserHandler;
-import org.yuhonglee.gcu.mobileassignment.XMLPullParserRoadworks;
+import org.yuhonglee.gcu.mobileassignment.PullParser.XMLPullParserRoadworks;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.lang.ref.WeakReference;
 import java.net.URL;
 
 import java.util.List;
+import java.util.Objects;
 
 //extends to the swipe refresh to allow refreshing the data with a upwards swipe
 public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -57,8 +60,9 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
         //programming variables
         private ArrayAdapter<ListItemAdapter> adapter;
         private List<ListItemAdapter> current;
+        private Context context;
 
-        // Traffic Scotland URL
+        // Traffic Scotland URL Planned Road Works
         private String urlSource = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
 
         @Override
@@ -90,13 +94,13 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                 swipeLayout.setColorSchemeColors(Color.GREEN);
 
                 //executes the async task when the app opens
-                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 //when button is pressed or clicked run the async task
                 startButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         }
                 });
                 return rootView;
@@ -104,7 +108,7 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
         //swipe refresh code that executes the async task
         @Override
         public void onRefresh() {
-                new RetrieveFeedTask1().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new RetrieveFeedTask1(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -115,6 +119,12 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
 
         //async task
         private class RetrieveFeedTask1 extends AsyncTask<Void, Integer, String> {
+                //for passing context// needed for dark theme
+                private final WeakReference<Context> contextReference;
+
+                public RetrieveFeedTask1(Context context) {
+                        this.contextReference = new WeakReference<Context>(context);
+                }
 
                 protected void onPreExecute() {
                         super.onPreExecute();
@@ -183,30 +193,39 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                 protected void onPostExecute(String emptyString){
                         //hides the progress bar and display text
                         progressBar1.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), "Data Downloaded!!", Toast.LENGTH_SHORT).show();
-                        //Stores the list of current into the textview in row layout
-                        adapter = new ArrayAdapter<ListItemAdapter>
-                                (getActivity(), R.layout.row, R.id.listtext, current) {
-                                @Override
-                                public View getView(int position, View convertView, ViewGroup parent) {
-                                        //changes the colour of list item based on the Strings
-                                        // (could've been integer but I had no time to turn this into int)
-                                        View itemView = super.getView(position, convertView, parent);
-                                        if (getItem(position).getDifference().equals("{DAYS=0, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.GREEN);
-                                        } else if (getItem(position).getDifference().equals("{DAYS=1, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.YELLOW);
-                                        } else if (getItem(position).getDifference().equals("{DAYS=3, HOURS=0}")) {
-                                                itemView.setBackgroundColor(Color.RED);
-                                        } else {
-                                                itemView.setBackgroundColor(Color.WHITE);
+
+                        //checks context and runs the code if there is
+                        context = this.contextReference.get();
+                        if(context != null) {
+                                Toast.makeText(context, "Data Downloaded!!", Toast.LENGTH_SHORT).show();
+                                //Stores the list of current into the textview in row layout
+                                adapter = new ArrayAdapter<ListItemAdapter>
+                                        (Objects.requireNonNull(context), R.layout.row, R.id.listtext, current) {
+                                        @Override
+                                        public View getView(int position, View convertView, ViewGroup parent) {
+                                                //changes the colour of list item based on the Strings
+                                                // (could've been integer but I had no time to turn this into int)
+                                                View itemView = super.getView(position, convertView, parent);
+                                                if (getItem(position).getDifference().equals("{DAYS=0, HOURS=0}")) {
+                                                        itemView.setBackgroundColor(Color.GREEN);
+                                                } else if (getItem(position).getDifference().equals("{DAYS=1, HOURS=0}")) {
+                                                        itemView.setBackgroundColor(getResources().getColor(R.color.Orange));
+                                                } else if (getItem(position).getDifference().equals("{DAYS=3, HOURS=0}")) {
+                                                        itemView.setBackgroundColor(Color.RED);
+                                                } else {
+                                                        TypedArray a = context.getTheme().obtainStyledAttributes(R.styleable.textlist);
+
+                                                        int color = a.getColor(R.styleable.textlist_bgColor, -1);
+
+                                                        itemView.setBackgroundColor(color);
+                                                }
+
+
+                                                return itemView;
+
                                         }
-
-
-                                        return itemView;
-
-                                }
-                        };
+                                };
+                        }
                         //calls the list view and sets filled row layout to list view
                         listView.setAdapter(adapter);
 
@@ -226,14 +245,14 @@ public class Frag3 extends Fragment implements SwipeRefreshLayout.OnRefreshListe
                                                         int position, long title) {
                                         ImageView img= (ImageView) view.findViewById(R.id.icon);
                                         if(hasClicked.get(position, false))  {
-                                                img.setImageResource(R.drawable.baseline_expand_more_black_48dp);
+                                                img.setImageResource(R.drawable.baseline_expand_more_black_24dp);
                                                 current.get(position).setExpand(false);
                                                 hasClicked.put(position, false);
                                                 adapter.notifyDataSetChanged();
 
                                         }
                                         else {
-                                                img.setImageResource(R.drawable.baseline_expand_less_black_48dp);
+                                                img.setImageResource(R.drawable.baseline_expand_less_black_24dp);
                                                 current.get(position).setExpand(true);
                                                 hasClicked.put(position, true);
                                                 adapter.notifyDataSetChanged();

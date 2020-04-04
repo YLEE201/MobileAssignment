@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/label1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="Enter Road"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/Search"
+            android:singleLine="true"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:background="?attr/bgColor"
+            android:textColor="?attr/textColor"
+            android:theme="@style/MyEditTextStyle2"
+            android:hint="Example: A90/M74/A74......"
+            android:textColorHint="?attr/metaTextColor"
+            android:textSize="20sp"
+            android:imeOptions="actionNext" />
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Press to get data" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="150dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+</LinearLayout>

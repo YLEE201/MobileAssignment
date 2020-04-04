@@ -1,18 +1,16 @@
-package org.yuhonglee.gcu.mobileassignment;
+package org.yuhonglee.gcu.mobileassignment.PullParser;
 //Name.Yu Hong Lee
 //StD No.S1620580
 
-import android.content.Context;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
-import org.yuhonglee.gcu.mobileassignment.ui.main.ListItemAdapter;
+import org.yuhonglee.gcu.mobileassignment.ListItemAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

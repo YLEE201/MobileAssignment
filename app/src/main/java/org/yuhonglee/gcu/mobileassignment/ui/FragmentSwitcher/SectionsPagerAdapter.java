@@ -1,4 +1,4 @@
-package org.yuhonglee.gcu.mobileassignment.ui.main;
+package org.yuhonglee.gcu.mobileassignment.ui.FragmentSwitcher;
 //Name.Yu Hong Lee
 //StD No.S1620580
 
@@ -10,18 +10,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import org.yuhonglee.gcu.mobileassignment.Fragments.Frag1;
+import org.yuhonglee.gcu.mobileassignment.Fragments.Frag2;
+import org.yuhonglee.gcu.mobileassignment.Fragments.Frag3;
+import org.yuhonglee.gcu.mobileassignment.Fragments.Frag4;
 import org.yuhonglee.gcu.mobileassignment.R;
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
-
-//where i set the tabs of the fragments
+//where I set the tabs of the fragments
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3, R.string.tab_text_4};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -42,6 +41,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 fragment = new Frag3();
                 break;
+            case 3:
+                fragment = new Frag4();
+                break;
         }
         return fragment;
     }
@@ -55,6 +57,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 4 total pages.
-        return 3;
+        return 4;
     }
 }

@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:src="@drawable/baseline_expand_more_black_48dp" />
+            android:tint="?attr/textColor"
+            android:src="@drawable/baseline_expand_more_black_24dp" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -25,6 +26,7 @@
             <TextView
                 android:id="@+id/listtext"
                 android:textSize="20sp"
+                android:textColor="?attr/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
