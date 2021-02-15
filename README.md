@@ -48,3 +48,5 @@ IDE: Android Studio
 Programming Language: Java
 
 # Demo App
+
+![] (TrafficApp.gif)
