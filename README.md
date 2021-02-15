@@ -2,6 +2,7 @@
 An Android App that used the Traffic Scotland RSS feed to create a presentable and useful layout of information to users. Note. The plan for journey function does not work as that requires a premium google maps key which would link to my debit/credit card.
 
 # Gradle
+```
 apply plugin: 'com.android.application'
 
 android {
@@ -36,7 +37,7 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
 }
-
+```
 # Notes
 
 Within this respoitory is the code for the Mobile App as well as the documentation.
