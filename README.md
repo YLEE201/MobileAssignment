@@ -49,4 +49,4 @@ Programming Language: Java
 
 # Demo App
 
-! [] (TrafficApp.gif)
+![Gif](TrafficApp.gif)
