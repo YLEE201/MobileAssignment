@@ -1,5 +1,5 @@
 # MobileAssignment
-An Android App that used the Traffic Scotland RSS feed to create a presentable and useful layout of information to users. Note. The plan for journey function does not work as that requires a premium google maps key which would link to my debit/credit card.
+An Android App that used the Traffic Scotland RSS feed to create a presentable and useful layout of information to users. Note. The plan for journey function does not work as that requires a premium google maps key which would have me to link debit/credit card to my google account.
 
 # Gradle
 ```
@@ -40,7 +40,7 @@ dependencies {
 ```
 # Notes
 
-Within this respoitory is the code for the Mobile App as well as the documentation.
+Within this respoitory is the code for the Mobile App as well as some documentation.
 
 # Application Architecture
 ```
@@ -51,3 +51,8 @@ API: Google Maps
 # Demo App
 
 ![Gif](TrafficApp.gif)
+
+# Author 
+
+Yu Hong Lee
+
