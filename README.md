@@ -46,6 +46,7 @@ Within this respoitory is the code for the Mobile App as well as the documentati
 ```
 IDE: Android Studio
 Programming Language: Java
+API: Google Maps
 ```
 # Demo App
 
