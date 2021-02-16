@@ -51,6 +51,10 @@ API: Google Maps
 # Demo App
 
 ![Gif](TrafficApp.gif)
+![Gif](TrafficApp1.gif)
+
+![Gif](TrafficApp2.gif)
+
 
 # Author 
 
